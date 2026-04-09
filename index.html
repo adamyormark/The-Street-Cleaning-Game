@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>The Street Cleaning Game</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --card-border: #2a2d3a;
+    --text: #e8e8ed;
+    --text-dim: #8b8d97;
+    --green: #34d399;
+    --green-bg: rgba(52, 211, 153, 0.12);
+    --red: #f87171;
+    --red-bg: rgba(248, 113, 113, 0.12);
+    --blue: #60a5fa;
+    --blue-bg: rgba(96, 165, 250, 0.12);
+    --gray: #4b4d57;
+    --yellow: #fbbf24;
+    --yellow-bg: rgba(251, 191, 36, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    padding: 20px 0 8px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  header .date {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .status-banner {
+    margin: 16px 0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .status-banner.suspended {
+    background: var(--green-bg);
+    color: var(--green);
+    border: 1px solid rgba(52, 211, 153, 0.25);
+  }
+
+  .status-banner.in-effect {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid rgba(248, 113, 113, 0.25);
+  }
+
+  .status-banner .reason {
+    font-weight: 400;
+    font-size: 13px;
+    opacity: 0.85;
+    display: block;
+    margin-top: 4px;
+  }
+
+  .section-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 20px 0 10px 4px;
+  }
+
+  .days-strip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 0 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .days-strip::-webkit-scrollbar { display: none; }
+
+  .day-card {
+    flex: 0 0 auto;
+    width: 72px;
+    padding: 10px 6px;
+    border-radius: 12px;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+  }
+
+  .day-card.today {
+    border-color: var(--blue);
+    background: var(--blue-bg);
+  }
+
+  .day-card .day-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+  }
+
+  .day-card.today .day-name { color: var(--blue); }
+
+  .day-card .day-num {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 4px 0;
+  }
+
+  .day-card .day-status {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .day-card .day-status.suspended {
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .day-card .day-status.in-effect {
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
+  .day-card .day-status.no-cleaning {
+    background: rgba(75, 77, 87, 0.3);
+    color: var(--text-dim);
+  }
+
+  .recs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rec-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+
+  .rec-card.best {
+    border-color: var(--green);
+    background: var(--green-bg);
+  }
+
+  .rec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .rec-day {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .rec-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .rec-badge.safe {
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .rec-badge.ok {
+    background: var(--yellow-bg);
+    color: var(--yellow);
+  }
+
+  .rec-badge.warn {
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
+  .rec-detail {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .rec-detail strong {
+    color: var(--text);
+  }
+
+  .rec-move {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--card-border);
+  }
+
+  .settings-toggle {
+    display: block;
+    width: 100%;
+    margin: 24px 0 12px;
+    padding: 12px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .settings-panel {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .settings-panel.open { display: block; }
+
+  .settings-group {
+    margin-bottom: 16px;
+  }
+
+  .settings-group:last-child { margin-bottom: 0; }
+
+  .settings-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .checkbox-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .checkbox-row .chip {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: rgba(75, 77, 87, 0.3);
+    border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .checkbox-row .chip.active {
+    background: var(--blue-bg);
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  .schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .schedule-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(75, 77, 87, 0.2);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .schedule-item .remove-btn {
+    background: none;
+    border: none;
+    color: var(--red);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .add-schedule {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .add-schedule select {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(75, 77, 87, 0.3);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    font-size: 14px;
+    -webkit-appearance: none;
+  }
+
+  .add-schedule button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: var(--blue-bg);
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 20px 0 40px;
+    font-size: 12px;
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+
+  .footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Street Cleaning Game</h1>
+  <div class="date" id="todayDate"></div>
+</header>
+
+<div id="statusBanner" class="status-banner"></div>
+
+<div class="section-label">Next 7 Days</div>
+<div class="days-strip" id="daysStrip"></div>
+
+<div class="section-label">Spot Recommendations</div>
+<div class="recs" id="recs"></div>
+
+<button class="settings-toggle" id="settingsToggle">Settings</button>
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-group">
+    <label>Spot types near you</label>
+    <div class="checkbox-row" id="spotTypeChips"></div>
+  </div>
+  <div class="settings-group">
+    <label>Evenings you can't move your car</label>
+    <div class="schedule-list" id="scheduleList"></div>
+    <div class="add-schedule">
+      <select id="scheduleDay">
+        <option value="0">Sunday evening</option>
+        <option value="1">Monday evening</option>
+        <option value="2">Tuesday evening</option>
+        <option value="3">Wednesday evening</option>
+        <option value="4">Thursday evening</option>
+        <option value="5">Friday evening</option>
+        <option value="6">Saturday evening</option>
+      </select>
+      <button id="addScheduleBtn">Add</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Data: <a href="https://www.nyc.gov/html/dot/downloads/pdf/asp-calendar-2026.pdf">NYC DOT 2026 ASP Calendar</a>
+</div>
+
+<script>
+// --- 2026 NYC ASP Suspension Calendar (NYC DOT) ---
+const SUSPENSIONS_2026 = [
+  { date: '2026-01-01', name: "New Year's Day" },
+  { date: '2026-01-06', name: "Three Kings' Day" },
+  { date: '2026-01-19', name: 'Martin Luther King Jr. Day' },
+  { date: '2026-02-12', name: "Lincoln's Birthday" },
+  { date: '2026-02-16', name: "Presidents' Day / Lunar New Year's Eve" },
+  { date: '2026-02-17', name: 'Lunar New Year' },
+  { date: '2026-02-18', name: 'Ash Wednesday / Losar' },
+  { date: '2026-03-03', name: 'Purim' },
+  { date: '2026-03-20', name: 'Eid al-Fitr' },
+  { date: '2026-03-21', name: 'Eid al-Fitr' },
+  { date: '2026-04-02', name: 'Passover / Holy Thursday' },
+  { date: '2026-04-03', name: 'Passover / Good Friday' },
+  { date: '2026-04-08', name: 'Passover (7th day)' },
+  { date: '2026-04-09', name: 'Passover (8th day) / Orthodox Holy Thursday' },
+  { date: '2026-04-10', name: 'Orthodox Good Friday' },
+  { date: '2026-05-14', name: 'Solemnity of the Ascension' },
+  { date: '2026-05-22', name: 'Shavuot' },
+  { date: '2026-05-23', name: 'Shavuot' },
+  { date: '2026-05-25', name: 'Memorial Day' },
+  { date: '2026-05-27', name: 'Eid al-Adha' },
+  { date: '2026-05-28', name: 'Eid al-Adha' },
+  { date: '2026-06-19', name: 'Juneteenth' },
+  { date: '2026-07-03', name: 'Independence Day (observed)' },
+  { date: '2026-07-04', name: 'Independence Day' },
+  { date: '2026-07-05', name: 'Independence Day (observed)' },
+  { date: '2026-07-23', name: "Tisha B'Av" },
+  { date: '2026-08-15', name: 'Feast of the Assumption' },
+  { date: '2026-09-07', name: 'Labor Day' },
+  { date: '2026-09-12', name: 'Rosh Hashanah' },
+  { date: '2026-09-13', name: 'Rosh Hashanah' },
+  { date: '2026-09-21', name: 'Yom Kippur' },
+  { date: '2026-09-26', name: 'Sukkot' },
+  { date: '2026-09-27', name: 'Sukkot' },
+  { date: '2026-10-03', name: 'Shemini Atzeret' },
+  { date: '2026-10-04', name: 'Simchat Torah' },
+  { date: '2026-10-12', name: "Indigenous Peoples' Day" },
+  { date: '2026-11-01', name: "All Saints' Day" },
+  { date: '2026-11-03', name: 'Election Day' },
+  { date: '2026-11-08', name: 'Diwali' },
+  { date: '2026-11-11', name: 'Veterans Day' },
+  { date: '2026-11-26', name: 'Thanksgiving' },
+  { date: '2026-12-08', name: 'Immaculate Conception' },
+  { date: '2026-12-25', name: 'Christmas Day' },
+];
+
+const SUSPENSION_MAP = new Map(SUSPENSIONS_2026.map(s => [s.date, s.name]));
+
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// --- Helpers ---
+function toDateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function addDays(d, n) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+
+function isSuspended(d) {
+  return SUSPENSION_MAP.get(toDateStr(d)) || null;
+}
+
+function daysBetween(a, b) {
+  const msPerDay = 86400000;
+  const aClean = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+  const bClean = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.round((bClean - aClean) / msPerDay);
+}
+
+// --- Settings ---
+const DEFAULT_SPOT_TYPES = [1, 2, 4, 5]; // Mon, Tue, Thu, Fri
+const DEFAULT_BLOCKED_EVENINGS = [];
+
+function loadSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('asp-settings'));
+    if (saved) return saved;
+  } catch {}
+  return { spotTypes: DEFAULT_SPOT_TYPES, blockedEvenings: DEFAULT_BLOCKED_EVENINGS };
+}
+
+function saveSettings(s) {
+  localStorage.setItem('asp-settings', JSON.stringify(s));
+}
+
+let settings = loadSettings();
+
+// --- Status Banner ---
+function renderStatusBanner() {
+  const el = document.getElementById('statusBanner');
+  const today = new Date();
+  const reason = isSuspended(today);
+  if (reason) {
+    el.className = 'status-banner suspended';
+    el.innerHTML = 'ASP is suspended today<span class="reason">' + reason + '</span>';
+  } else if (today.getDay() === 0) {
+    el.className = 'status-banner suspended';
+    el.innerHTML = 'No street cleaning on Sundays';
+  } else {
+    el.className = 'status-banner in-effect';
+    el.innerHTML = 'ASP is in effect today';
+  }
+}
+
+// --- Today's Date ---
+function renderDate() {
+  const d = new Date();
+  document.getElementById('todayDate').textContent =
+    DAY_NAMES[d.getDay()] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+// --- 7-Day Strip ---
+function renderDaysStrip() {
+  const container = document.getElementById('daysStrip');
+  container.innerHTML = '';
+  const today = new Date();
+
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(today, i);
+    const dayOfWeek = d.getDay();
+    const reason = isSuspended(d);
+    const isCleaningDay = settings.spotTypes.includes(dayOfWeek);
+
+    const card = document.createElement('div');
+    card.className = 'day-card' + (i === 0 ? ' today' : '');
+
+    let statusHtml;
+    if (dayOfWeek === 0) {
+      statusHtml = '<div class="day-status no-cleaning">No ASP</div>';
+    } else if (reason) {
+      statusHtml = '<div class="day-status suspended">Off</div>';
+    } else if (!isCleaningDay) {
+      statusHtml = '<div class="day-status no-cleaning">N/A</div>';
+    } else {
+      statusHtml = '<div class="day-status in-effect">Active</div>';
+    }
+
+    card.innerHTML =
+      '<div class="day-name">' + DAY_ABBR[dayOfWeek] + '</div>' +
+      '<div class="day-num">' + d.getDate() + '</div>' +
+      statusHtml;
+
+    container.appendChild(card);
+  }
+}
+
+// --- Core Algorithm ---
+function analyzeSpot(cleaningDayOfWeek) {
+  const today = new Date();
+  const todayClean = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // Find next occurrences of this cleaning day, checking for suspensions
+  let checkDate = addDays(todayClean, 1);
+  // Advance to next occurrence of this day of week
+  while (checkDate.getDay() !== cleaningDayOfWeek) {
+    checkDate = addDays(checkDate, 1);
+  }
+
+  let suspendedDates = [];
+  let nextCleaningDate = null;
+
+  // Check up to 4 weeks ahead
+  for (let week = 0; week < 4; week++) {
+    const candidate = addDays(checkDate, week * 7);
+    const reason = isSuspended(candidate);
+    if (candidate.getDay() === 0) {
+      // Sunday — no ASP
+      suspendedDates.push({ date: candidate, reason: 'Sunday' });
+      continue;
+    }
+    if (reason) {
+      suspendedDates.push({ date: candidate, reason });
+    } else {
+      nextCleaningDate = candidate;
+      break;
+    }
+  }
+
+  if (!nextCleaningDate) {
+    // All 4 weeks suspended (unlikely) — great spot
+    nextCleaningDate = addDays(checkDate, 28);
+  }
+
+  // You need to move the evening before the cleaning day
+  // (since cleaning is during work hours and you leave at 8:30am)
+  const moveByEvening = addDays(nextCleaningDate, -1);
+  const safeDays = daysBetween(todayClean, moveByEvening);
+
+  // Check if move-by evening conflicts with blocked schedule
+  const moveByDayOfWeek = moveByEvening.getDay();
+  const hasConflict = settings.blockedEvenings.includes(moveByDayOfWeek);
+
+  return {
+    cleaningDay: cleaningDayOfWeek,
+    nextCleaningDate,
+    moveByEvening,
+    safeDays,
+    suspendedDates,
+    hasConflict,
+  };
+}
+
+function renderRecommendations() {
+  const container = document.getElementById('recs');
+  container.innerHTML = '';
+
+  if (settings.spotTypes.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:14px;">Select spot types in Settings below</div>';
+    return;
+  }
+
+  const analyses = settings.spotTypes.map(analyzeSpot);
+  analyses.sort((a, b) => b.safeDays - a.safeDays);
+
+  const bestSafe = analyses[0].safeDays;
+
+  analyses.forEach((a, idx) => {
+    const card = document.createElement('div');
+    const isBest = a.safeDays === bestSafe && a.safeDays > 0;
+    card.className = 'rec-card' + (isBest ? ' best' : '');
+
+    let badgeClass, badgeText;
+    if (a.safeDays >= 5) {
+      badgeClass = 'safe';
+      badgeText = a.safeDays + ' days safe';
+    } else if (a.safeDays >= 3) {
+      badgeClass = 'ok';
+      badgeText = a.safeDays + ' days safe';
+    } else {
+      badgeClass = 'warn';
+      badgeText = a.safeDays <= 0 ? 'Move tomorrow' : a.safeDays + (a.safeDays === 1 ? ' day' : ' days');
+    }
+
+    let detail = '';
+    if (a.suspendedDates.length > 0) {
+      const suspNames = a.suspendedDates.map(s =>
+        DAY_ABBR[s.date.getDay()] + ' ' + MONTH_NAMES[s.date.getMonth()] + ' ' + s.date.getDate() + ' (' + s.reason + ')'
+      );
+      detail = 'Cleaning suspended: ' + suspNames.join(', ') + '. ';
+    }
+    detail += 'Next cleaning: <strong>' + DAY_NAMES[a.nextCleaningDate.getDay()] + ', ' +
+      MONTH_NAMES[a.nextCleaningDate.getMonth()] + ' ' + a.nextCleaningDate.getDate() + '</strong>';
+
+    let moveText = 'Move by: ' + DAY_NAMES[a.moveByEvening.getDay()] + ' evening, ' +
+      MONTH_NAMES[a.moveByEvening.getMonth()] + ' ' + a.moveByEvening.getDate();
+    if (a.hasConflict) {
+      moveText += ' <span style="color:var(--red)">You\'re blocked this evening</span>';
+    }
+
+    card.innerHTML =
+      '<div class="rec-header">' +
+        '<div class="rec-day">' + DAY_NAMES[a.cleaningDay] + ' spot</div>' +
+        '<div class="rec-badge ' + badgeClass + '">' + badgeText + '</div>' +
+      '</div>' +
+      '<div class="rec-detail">' + detail + '</div>' +
+      '<div class="rec-move">' + moveText + '</div>';
+
+    container.appendChild(card);
+  });
+}
+
+// --- Settings UI ---
+function renderSpotTypeChips() {
+  const container = document.getElementById('spotTypeChips');
+  container.innerHTML = '';
+  // Only show Mon-Sat (0=Sun is never a cleaning day)
+  [1, 2, 3, 4, 5, 6].forEach(day => {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (settings.spotTypes.includes(day) ? ' active' : '');
+    chip.textContent = DAY_ABBR[day];
+    chip.addEventListener('click', () => {
+      if (settings.spotTypes.includes(day)) {
+        settings.spotTypes = settings.spotTypes.filter(d => d !== day);
+      } else {
+        settings.spotTypes.push(day);
+        settings.spotTypes.sort();
+      }
+      saveSettings(settings);
+      renderSpotTypeChips();
+      renderDaysStrip();
+      renderRecommendations();
+    });
+    container.appendChild(chip);
+  });
+}
+
+function renderScheduleList() {
+  const container = document.getElementById('scheduleList');
+  container.innerHTML = '';
+  settings.blockedEvenings.forEach(day => {
+    const item = document.createElement('div');
+    item.className = 'schedule-item';
+    item.innerHTML =
+      '<span>' + DAY_NAMES[day] + ' evening</span>' +
+      '<button class="remove-btn" data-day="' + day + '">&times;</button>';
+    container.appendChild(item);
+  });
+
+  container.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const day = parseInt(btn.dataset.day);
+      settings.blockedEvenings = settings.blockedEvenings.filter(d => d !== day);
+      saveSettings(settings);
+      renderScheduleList();
+      renderRecommendations();
+    });
+  });
+}
+
+// --- Init ---
+function init() {
+  renderDate();
+  renderStatusBanner();
+  renderDaysStrip();
+  renderRecommendations();
+  renderSpotTypeChips();
+  renderScheduleList();
+
+  document.getElementById('settingsToggle').addEventListener('click', () => {
+    document.getElementById('settingsPanel').classList.toggle('open');
+    const btn = document.getElementById('settingsToggle');
+    btn.textContent = document.getElementById('settingsPanel').classList.contains('open') ? 'Close Settings' : 'Settings';
+  });
+
+  document.getElementById('addScheduleBtn').addEventListener('click', () => {
+    const day = parseInt(document.getElementById('scheduleDay').value);
+    if (!settings.blockedEvenings.includes(day)) {
+      settings.blockedEvenings.push(day);
+      settings.blockedEvenings.sort();
+      saveSettings(settings);
+      renderScheduleList();
+      renderRecommendations();
+    }
+  });
+}
+
+init();
+</script>
+</body>
+</html>
