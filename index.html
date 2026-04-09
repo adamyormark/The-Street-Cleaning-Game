@@ -22,45 +22,57 @@
     --gray: #4b4d57;
     --yellow: #fbbf24;
     --yellow-bg: rgba(251, 191, 36, 0.12);
+    --purple: #a78bfa;
+    --purple-bg: rgba(167, 139, 250, 0.12);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    height: 100%;
+    height: 100dvh;
+  }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
     -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
   }
 
   header {
-    padding: 20px 0 8px;
+    padding: 8px 0 2px;
     text-align: center;
+    flex-shrink: 0;
   }
 
   header h1 {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.3px;
   }
 
   header .date {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--text-dim);
-    margin-top: 4px;
+    margin-top: 1px;
   }
 
   .status-banner {
-    margin: 16px 0;
-    padding: 14px 16px;
-    border-radius: 14px;
-    font-size: 15px;
+    margin: 6px 0 0;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 600;
     text-align: center;
-    line-height: 1.4;
+    line-height: 1.3;
+    flex-shrink: 0;
   }
 
   .status-banner.suspended {
@@ -77,39 +89,91 @@
 
   .status-banner .reason {
     font-weight: 400;
-    font-size: 13px;
+    font-size: 11px;
     opacity: 0.85;
-    display: block;
-    margin-top: 4px;
   }
 
-  .section-label {
+  /* My Spot Banner */
+  .my-spot {
+    margin: 6px 0 0;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--purple-bg);
+    border: 1px solid var(--purple);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .my-spot-info {
     font-size: 13px;
+    font-weight: 600;
+    color: var(--purple);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .my-spot-detail {
+    font-weight: 400;
+    font-size: 11px;
+    opacity: 0.8;
+    display: block;
+    margin-top: 1px;
+  }
+
+  .my-spot-clear {
+    background: none;
+    border: 1px solid var(--purple);
+    color: var(--purple);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+
+  .hidden { display: none !important; }
+
+  .section-label {
+    font-size: 11px;
     font-weight: 600;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin: 20px 0 10px 4px;
+    margin: 8px 0 5px 2px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tap-hint {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.5;
+    margin-right: 2px;
   }
 
   .days-strip {
     display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 2px 0 8px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    gap: 5px;
+    flex-shrink: 0;
   }
-  .days-strip::-webkit-scrollbar { display: none; }
 
   .day-card {
-    flex: 0 0 auto;
-    width: 72px;
-    padding: 10px 6px;
-    border-radius: 12px;
+    flex: 1;
+    padding: 5px 2px;
+    border-radius: 8px;
     text-align: center;
     background: var(--card);
     border: 1px solid var(--card-border);
+    min-width: 0;
   }
 
   .day-card.today {
@@ -118,150 +182,197 @@
   }
 
   .day-card .day-name {
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 600;
     text-transform: uppercase;
     color: var(--text-dim);
-    letter-spacing: 0.3px;
   }
 
   .day-card.today .day-name { color: var(--blue); }
 
   .day-card .day-num {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
-    margin: 4px 0;
+    margin: 1px 0;
   }
 
   .day-card .day-status {
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 1px 4px;
+    border-radius: 3px;
     white-space: nowrap;
   }
 
-  .day-card .day-status.suspended {
-    background: var(--green-bg);
-    color: var(--green);
-  }
+  .day-card .day-status.suspended { background: var(--green-bg); color: var(--green); }
+  .day-card .day-status.in-effect { background: var(--red-bg); color: var(--red); }
+  .day-card .day-status.no-cleaning { background: rgba(75, 77, 87, 0.3); color: var(--text-dim); }
 
-  .day-card .day-status.in-effect {
-    background: var(--red-bg);
-    color: var(--red);
-  }
-
-  .day-card .day-status.no-cleaning {
-    background: rgba(75, 77, 87, 0.3);
-    color: var(--text-dim);
-  }
-
+  /* Recommendations */
   .recs {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .rec-card {
     background: var(--card);
     border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 14px 16px;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.15s, background 0.15s;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
   }
+
+  .rec-card:active { opacity: 0.85; }
 
   .rec-card.best {
     border-color: var(--green);
     background: var(--green-bg);
   }
 
+  .rec-card.parked {
+    border-color: var(--purple);
+    background: var(--purple-bg);
+  }
+
+  .rec-card.pending {
+    border-color: var(--yellow);
+    background: var(--yellow-bg);
+  }
+
   .rec-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 1px;
   }
 
   .rec-day {
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 700;
   }
 
   .rec-badge {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
+    padding: 2px 6px;
+    border-radius: 5px;
     white-space: nowrap;
   }
 
-  .rec-badge.safe {
-    background: var(--green-bg);
-    color: var(--green);
-  }
-
-  .rec-badge.ok {
-    background: var(--yellow-bg);
-    color: var(--yellow);
-  }
-
-  .rec-badge.warn {
-    background: var(--red-bg);
-    color: var(--red);
-  }
+  .rec-badge.safe { background: var(--green-bg); color: var(--green); }
+  .rec-badge.ok { background: var(--yellow-bg); color: var(--yellow); }
+  .rec-badge.warn { background: var(--red-bg); color: var(--red); }
 
   .rec-detail {
-    font-size: 14px;
+    font-size: 11px;
     color: var(--text-dim);
-    line-height: 1.5;
+    line-height: 1.3;
   }
 
-  .rec-detail strong {
-    color: var(--text);
-  }
+  .rec-detail strong { color: var(--text); }
 
   .rec-move {
-    font-size: 13px;
+    font-size: 11px;
     color: var(--text-dim);
-    margin-top: 6px;
-    padding-top: 6px;
+    margin-top: 2px;
+    padding-top: 2px;
     border-top: 1px solid var(--card-border);
   }
 
-  .settings-toggle {
-    display: block;
-    width: 100%;
-    margin: 24px 0 12px;
-    padding: 12px;
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    color: var(--text-dim);
-    font-size: 14px;
+  .rec-confirm {
+    font-size: 12px;
     font-weight: 600;
-    text-align: center;
+    color: var(--yellow);
+    margin-top: 2px;
+  }
+
+  /* Bottom row */
+  .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 2px 2px;
+    flex-shrink: 0;
+  }
+
+  .gear-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 16px;
     cursor: pointer;
+    padding: 2px 6px;
     -webkit-tap-highlight-color: transparent;
+    opacity: 0.5;
   }
 
-  .settings-panel {
+  .footer {
+    font-size: 10px;
+    color: var(--text-dim);
+    opacity: 0.4;
+  }
+
+  .footer a { color: var(--text-dim); }
+
+  /* Settings overlay */
+  .settings-overlay {
     display: none;
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 24px;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
   }
 
-  .settings-panel.open { display: block; }
+  .settings-overlay.open { display: flex; }
 
-  .settings-group {
+  .settings-sheet {
+    background: var(--bg);
+    border-top: 1px solid var(--card-border);
+    border-radius: 16px 16px 0 0;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+    width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 16px;
   }
 
-  .settings-group:last-child { margin-bottom: 0; }
+  .settings-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
 
+  .settings-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .settings-group { margin-bottom: 16px; }
+  .settings-group:last-child { margin-bottom: 0; }
   .settings-group label {
     display: block;
     font-size: 13px;
@@ -270,11 +381,7 @@
     margin-bottom: 8px;
   }
 
-  .checkbox-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+  .checkbox-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
   .checkbox-row .chip {
     padding: 8px 14px;
@@ -297,11 +404,7 @@
     color: var(--blue);
   }
 
-  .schedule-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .schedule-list { display: flex; flex-direction: column; gap: 6px; }
 
   .schedule-item {
     display: flex;
@@ -323,11 +426,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .add-schedule {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-  }
+  .add-schedule { display: flex; gap: 8px; margin-top: 8px; }
 
   .add-schedule select {
     flex: 1;
@@ -352,16 +451,6 @@
     -webkit-tap-highlight-color: transparent;
     white-space: nowrap;
   }
-
-  .footer {
-    text-align: center;
-    padding: 20px 0 40px;
-    font-size: 12px;
-    color: var(--text-dim);
-    opacity: 0.5;
-  }
-
-  .footer a { color: var(--text-dim); }
 </style>
 </head>
 <body>
@@ -373,38 +462,52 @@
 
 <div id="statusBanner" class="status-banner"></div>
 
+<div id="mySpot" class="my-spot hidden">
+  <div class="my-spot-info" id="mySpotInfo"></div>
+  <button class="my-spot-clear" id="mySpotClear">Clear</button>
+</div>
+
 <div class="section-label">Next 7 Days</div>
 <div class="days-strip" id="daysStrip"></div>
 
-<div class="section-label">Spot Recommendations</div>
+<div class="section-label">
+  Spot Recommendations
+  <span class="tap-hint" id="tapHint">tap to park</span>
+</div>
 <div class="recs" id="recs"></div>
 
-<button class="settings-toggle" id="settingsToggle">Settings</button>
-<div class="settings-panel" id="settingsPanel">
-  <div class="settings-group">
-    <label>Spot types near you</label>
-    <div class="checkbox-row" id="spotTypeChips"></div>
-  </div>
-  <div class="settings-group">
-    <label>Evenings you can't move your car</label>
-    <div class="schedule-list" id="scheduleList"></div>
-    <div class="add-schedule">
-      <select id="scheduleDay">
-        <option value="0">Sunday evening</option>
-        <option value="1">Monday evening</option>
-        <option value="2">Tuesday evening</option>
-        <option value="3">Wednesday evening</option>
-        <option value="4">Thursday evening</option>
-        <option value="5">Friday evening</option>
-        <option value="6">Saturday evening</option>
-      </select>
-      <button id="addScheduleBtn">Add</button>
-    </div>
-  </div>
+<div class="bottom-row">
+  <span class="footer"><a href="https://www.nyc.gov/html/dot/downloads/pdf/asp-calendar-2026.pdf">NYC DOT 2026 ASP Calendar</a></span>
+  <button class="gear-btn" id="gearBtn">&#9881;</button>
 </div>
 
-<div class="footer">
-  Data: <a href="https://www.nyc.gov/html/dot/downloads/pdf/asp-calendar-2026.pdf">NYC DOT 2026 ASP Calendar</a>
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-sheet">
+    <div class="settings-header">
+      <div class="settings-title">Settings</div>
+      <button class="settings-close" id="settingsClose">&times;</button>
+    </div>
+    <div class="settings-group">
+      <label>Spot types near you</label>
+      <div class="checkbox-row" id="spotTypeChips"></div>
+    </div>
+    <div class="settings-group">
+      <label>Evenings you can't move your car</label>
+      <div class="schedule-list" id="scheduleList"></div>
+      <div class="add-schedule">
+        <select id="scheduleDay">
+          <option value="0">Sunday evening</option>
+          <option value="1">Monday evening</option>
+          <option value="2">Tuesday evening</option>
+          <option value="3">Wednesday evening</option>
+          <option value="4">Thursday evening</option>
+          <option value="5">Friday evening</option>
+          <option value="6">Saturday evening</option>
+        </select>
+        <button id="addScheduleBtn">Add</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -501,14 +604,139 @@ function saveSettings(s) {
 
 let settings = loadSettings();
 
-// --- Status Banner ---
+// --- Parked Spot Tracking ---
+function loadParkedSpot() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('asp-parked-spot'));
+    if (saved && saved.dayOfWeek !== undefined) return saved;
+  } catch {}
+  return null;
+}
+
+function saveParkedSpot(spot) {
+  if (spot) {
+    localStorage.setItem('asp-parked-spot', JSON.stringify(spot));
+  } else {
+    localStorage.removeItem('asp-parked-spot');
+  }
+}
+
+let parkedSpot = loadParkedSpot();
+let pendingParkDay = null;
+
+function validateParkedSpot() {
+  if (!parkedSpot) return;
+
+  // Check if a non-suspended cleaning day has passed since parking
+  const parkedDate = new Date(parkedSpot.parkedAt + 'T12:00:00');
+  const today = new Date();
+  const todayClean = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  let d = addDays(parkedDate, 1);
+  while (d < todayClean) {
+    if (d.getDay() === parkedSpot.dayOfWeek && d.getDay() !== 0) {
+      const reason = isSuspended(d);
+      if (!reason) {
+        // Cleaning happened — auto-clear expired spot
+        parkedSpot = null;
+        saveParkedSpot(null);
+        return;
+      }
+    }
+    d = addDays(d, 1);
+  }
+}
+
+function parkInSpot(dayOfWeek) {
+  parkedSpot = {
+    dayOfWeek: dayOfWeek,
+    parkedAt: toDateStr(new Date())
+  };
+  saveParkedSpot(parkedSpot);
+  renderMySpot();
+  renderRecommendations();
+}
+
+function clearParkedSpot() {
+  parkedSpot = null;
+  saveParkedSpot(null);
+  pendingParkDay = null;
+  renderMySpot();
+  renderRecommendations();
+}
+
+function handleRecCardTap(dayOfWeek, event) {
+  event.stopPropagation();
+
+  if (parkedSpot && parkedSpot.dayOfWeek === dayOfWeek) {
+    // Already parked here — use the Clear button
+    return;
+  }
+
+  if (pendingParkDay === dayOfWeek) {
+    // Second tap — confirm
+    parkInSpot(dayOfWeek);
+    pendingParkDay = null;
+  } else {
+    // First tap — show pending state
+    pendingParkDay = dayOfWeek;
+    renderRecommendations();
+  }
+}
+
+// --- Render: My Spot ---
+function renderMySpot() {
+  const el = document.getElementById('mySpot');
+  if (!parkedSpot) {
+    el.classList.add('hidden');
+    document.getElementById('tapHint').textContent = 'tap to park';
+    return;
+  }
+
+  document.getElementById('tapHint').textContent = '';
+
+  const today = new Date();
+  const todayClean = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayIsCleaningDay = todayClean.getDay() === parkedSpot.dayOfWeek
+    && todayClean.getDay() !== 0
+    && !isSuspended(todayClean);
+
+  const infoEl = document.getElementById('mySpotInfo');
+
+  if (todayIsCleaningDay) {
+    infoEl.innerHTML =
+      'Cleaning today! ' + DAY_NAMES[parkedSpot.dayOfWeek] + ' spot' +
+      '<span class="my-spot-detail" style="color:var(--red);opacity:1">Move your car now</span>';
+  } else {
+    const analysis = analyzeSpot(parkedSpot.dayOfWeek);
+    let timeLeft;
+    if (analysis.safeDays <= 0) {
+      timeLeft = 'Move tonight!';
+    } else if (analysis.safeDays === 1) {
+      timeLeft = '1 day left';
+    } else {
+      timeLeft = analysis.safeDays + ' days left';
+    }
+
+    infoEl.innerHTML =
+      DAY_NAMES[parkedSpot.dayOfWeek] + ' spot — ' + timeLeft +
+      '<span class="my-spot-detail">Move by ' +
+      DAY_NAMES[analysis.moveByEvening.getDay()] + ' evening, ' +
+      MONTH_NAMES[analysis.moveByEvening.getMonth()] + ' ' + analysis.moveByEvening.getDate() +
+      '</span>';
+  }
+
+  el.classList.remove('hidden');
+}
+
+// --- Render: Status Banner ---
 function renderStatusBanner() {
   const el = document.getElementById('statusBanner');
   const today = new Date();
   const reason = isSuspended(today);
   if (reason) {
     el.className = 'status-banner suspended';
-    el.innerHTML = 'ASP is suspended today<span class="reason">' + reason + '</span>';
+    el.innerHTML = 'ASP suspended today <span class="reason">&middot; ' + reason + '</span>';
   } else if (today.getDay() === 0) {
     el.className = 'status-banner suspended';
     el.innerHTML = 'No street cleaning on Sundays';
@@ -518,14 +746,14 @@ function renderStatusBanner() {
   }
 }
 
-// --- Today's Date ---
+// --- Render: Today's Date ---
 function renderDate() {
   const d = new Date();
   document.getElementById('todayDate').textContent =
     DAY_NAMES[d.getDay()] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 }
 
-// --- 7-Day Strip ---
+// --- Render: 7-Day Strip ---
 function renderDaysStrip() {
   const container = document.getElementById('daysStrip');
   container.innerHTML = '';
@@ -565,9 +793,7 @@ function analyzeSpot(cleaningDayOfWeek) {
   const today = new Date();
   const todayClean = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  // Find next occurrences of this cleaning day, checking for suspensions
   let checkDate = addDays(todayClean, 1);
-  // Advance to next occurrence of this day of week
   while (checkDate.getDay() !== cleaningDayOfWeek) {
     checkDate = addDays(checkDate, 1);
   }
@@ -575,12 +801,10 @@ function analyzeSpot(cleaningDayOfWeek) {
   let suspendedDates = [];
   let nextCleaningDate = null;
 
-  // Check up to 4 weeks ahead
   for (let week = 0; week < 4; week++) {
     const candidate = addDays(checkDate, week * 7);
     const reason = isSuspended(candidate);
     if (candidate.getDay() === 0) {
-      // Sunday — no ASP
       suspendedDates.push({ date: candidate, reason: 'Sunday' });
       continue;
     }
@@ -593,16 +817,12 @@ function analyzeSpot(cleaningDayOfWeek) {
   }
 
   if (!nextCleaningDate) {
-    // All 4 weeks suspended (unlikely) — great spot
     nextCleaningDate = addDays(checkDate, 28);
   }
 
-  // You need to move the evening before the cleaning day
-  // (since cleaning is during work hours and you leave at 8:30am)
   const moveByEvening = addDays(nextCleaningDate, -1);
   const safeDays = daysBetween(todayClean, moveByEvening);
 
-  // Check if move-by evening conflicts with blocked schedule
   const moveByDayOfWeek = moveByEvening.getDay();
   const hasConflict = settings.blockedEvenings.includes(moveByDayOfWeek);
 
@@ -616,12 +836,13 @@ function analyzeSpot(cleaningDayOfWeek) {
   };
 }
 
+// --- Render: Recommendations ---
 function renderRecommendations() {
   const container = document.getElementById('recs');
   container.innerHTML = '';
 
   if (settings.spotTypes.length === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:14px;">Select spot types in Settings below</div>';
+    container.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:14px;">Select spot types in Settings</div>';
     return;
   }
 
@@ -630,10 +851,17 @@ function renderRecommendations() {
 
   const bestSafe = analyses[0].safeDays;
 
-  analyses.forEach((a, idx) => {
+  analyses.forEach(function(a) {
+    const isParked = parkedSpot && parkedSpot.dayOfWeek === a.cleaningDay;
+    const isPending = pendingParkDay === a.cleaningDay;
+    const isBest = a.safeDays === bestSafe && a.safeDays > 0 && !isParked;
+
     const card = document.createElement('div');
-    const isBest = a.safeDays === bestSafe && a.safeDays > 0;
-    card.className = 'rec-card' + (isBest ? ' best' : '');
+    let cardClass = 'rec-card';
+    if (isParked) cardClass += ' parked';
+    else if (isPending) cardClass += ' pending';
+    else if (isBest) cardClass += ' best';
+    card.className = cardClass;
 
     let badgeClass, badgeText;
     if (a.safeDays >= 5) {
@@ -644,15 +872,15 @@ function renderRecommendations() {
       badgeText = a.safeDays + ' days safe';
     } else {
       badgeClass = 'warn';
-      badgeText = a.safeDays <= 0 ? 'Move tomorrow' : a.safeDays + (a.safeDays === 1 ? ' day' : ' days');
+      badgeText = a.safeDays <= 0 ? 'Move tonight' : a.safeDays + (a.safeDays === 1 ? ' day' : ' days');
     }
 
     let detail = '';
     if (a.suspendedDates.length > 0) {
-      const suspNames = a.suspendedDates.map(s =>
-        DAY_ABBR[s.date.getDay()] + ' ' + MONTH_NAMES[s.date.getMonth()] + ' ' + s.date.getDate() + ' (' + s.reason + ')'
-      );
-      detail = 'Cleaning suspended: ' + suspNames.join(', ') + '. ';
+      const suspNames = a.suspendedDates.map(function(s) {
+        return DAY_ABBR[s.date.getDay()] + ' ' + MONTH_NAMES[s.date.getMonth()] + ' ' + s.date.getDate() + ' (' + s.reason + ')';
+      });
+      detail = 'Suspended: ' + suspNames.join(', ') + '. ';
     }
     detail += 'Next cleaning: <strong>' + DAY_NAMES[a.nextCleaningDate.getDay()] + ', ' +
       MONTH_NAMES[a.nextCleaningDate.getMonth()] + ' ' + a.nextCleaningDate.getDate() + '</strong>';
@@ -660,16 +888,29 @@ function renderRecommendations() {
     let moveText = 'Move by: ' + DAY_NAMES[a.moveByEvening.getDay()] + ' evening, ' +
       MONTH_NAMES[a.moveByEvening.getMonth()] + ' ' + a.moveByEvening.getDate();
     if (a.hasConflict) {
-      moveText += ' <span style="color:var(--red)">You\'re blocked this evening</span>';
+      moveText += ' <span style="color:var(--red)">Blocked evening</span>';
     }
 
-    card.innerHTML =
+    let titleText = DAY_NAMES[a.cleaningDay] + ' spot';
+    if (isParked) titleText = 'Your car \u00B7 ' + titleText;
+
+    let html =
       '<div class="rec-header">' +
-        '<div class="rec-day">' + DAY_NAMES[a.cleaningDay] + ' spot</div>' +
+        '<div class="rec-day">' + titleText + '</div>' +
         '<div class="rec-badge ' + badgeClass + '">' + badgeText + '</div>' +
       '</div>' +
       '<div class="rec-detail">' + detail + '</div>' +
       '<div class="rec-move">' + moveText + '</div>';
+
+    if (isPending) {
+      html += '<div class="rec-confirm">Tap again to confirm</div>';
+    }
+
+    card.innerHTML = html;
+
+    card.addEventListener('click', function(e) {
+      handleRecCardTap(a.cleaningDay, e);
+    });
 
     container.appendChild(card);
   });
@@ -679,14 +920,13 @@ function renderRecommendations() {
 function renderSpotTypeChips() {
   const container = document.getElementById('spotTypeChips');
   container.innerHTML = '';
-  // Only show Mon-Sat (0=Sun is never a cleaning day)
-  [1, 2, 3, 4, 5, 6].forEach(day => {
+  [1, 2, 3, 4, 5, 6].forEach(function(day) {
     const chip = document.createElement('div');
     chip.className = 'chip' + (settings.spotTypes.includes(day) ? ' active' : '');
     chip.textContent = DAY_ABBR[day];
-    chip.addEventListener('click', () => {
+    chip.addEventListener('click', function() {
       if (settings.spotTypes.includes(day)) {
-        settings.spotTypes = settings.spotTypes.filter(d => d !== day);
+        settings.spotTypes = settings.spotTypes.filter(function(d) { return d !== day; });
       } else {
         settings.spotTypes.push(day);
         settings.spotTypes.sort();
@@ -703,7 +943,7 @@ function renderSpotTypeChips() {
 function renderScheduleList() {
   const container = document.getElementById('scheduleList');
   container.innerHTML = '';
-  settings.blockedEvenings.forEach(day => {
+  settings.blockedEvenings.forEach(function(day) {
     const item = document.createElement('div');
     item.className = 'schedule-item';
     item.innerHTML =
@@ -712,10 +952,10 @@ function renderScheduleList() {
     container.appendChild(item);
   });
 
-  container.querySelectorAll('.remove-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const day = parseInt(btn.dataset.day);
-      settings.blockedEvenings = settings.blockedEvenings.filter(d => d !== day);
+  container.querySelectorAll('.remove-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var day = parseInt(btn.dataset.day);
+      settings.blockedEvenings = settings.blockedEvenings.filter(function(d) { return d !== day; });
       saveSettings(settings);
       renderScheduleList();
       renderRecommendations();
@@ -725,26 +965,52 @@ function renderScheduleList() {
 
 // --- Init ---
 function init() {
+  validateParkedSpot();
+
   renderDate();
   renderStatusBanner();
+  renderMySpot();
   renderDaysStrip();
   renderRecommendations();
   renderSpotTypeChips();
   renderScheduleList();
 
-  document.getElementById('settingsToggle').addEventListener('click', () => {
-    document.getElementById('settingsPanel').classList.toggle('open');
-    const btn = document.getElementById('settingsToggle');
-    btn.textContent = document.getElementById('settingsPanel').classList.contains('open') ? 'Close Settings' : 'Settings';
+  // Gear button opens settings overlay
+  document.getElementById('gearBtn').addEventListener('click', function() {
+    document.getElementById('settingsOverlay').classList.add('open');
   });
 
-  document.getElementById('addScheduleBtn').addEventListener('click', () => {
-    const day = parseInt(document.getElementById('scheduleDay').value);
+  // Close settings
+  document.getElementById('settingsClose').addEventListener('click', function() {
+    document.getElementById('settingsOverlay').classList.remove('open');
+  });
+
+  // Click backdrop to close settings
+  document.getElementById('settingsOverlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('open');
+    }
+  });
+
+  // Clear parked spot
+  document.getElementById('mySpotClear').addEventListener('click', clearParkedSpot);
+
+  // Add blocked evening
+  document.getElementById('addScheduleBtn').addEventListener('click', function() {
+    var day = parseInt(document.getElementById('scheduleDay').value);
     if (!settings.blockedEvenings.includes(day)) {
       settings.blockedEvenings.push(day);
       settings.blockedEvenings.sort();
       saveSettings(settings);
       renderScheduleList();
+      renderRecommendations();
+    }
+  });
+
+  // Cancel pending park on outside tap
+  document.addEventListener('click', function() {
+    if (pendingParkDay !== null) {
+      pendingParkDay = null;
       renderRecommendations();
     }
   });
